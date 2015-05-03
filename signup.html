@@ -38,6 +38,7 @@
 
         var Signup = Parse.Object.extend("Signup");
         var savedSignup = new Signup();
+		alert(data["job"]);
 		var job = JSON.parse(data["job"]);
         savedSignup.set("name", data["name"]);
         savedSignup.set("event", data["date"]);	
@@ -48,6 +49,7 @@
 		savedSignup.set("meal_ticket", job.meal_ticket);
 		savedSignup.set("sort_order", job.sort_order);
 		savedSignup.set("job_day", job.job_day);					
+		savedSignup.set("job_id", job.objectId);
         //savedSignup.set("job", JSON.parse(data["job"]));
         savedSignup.save(null, {
             success: function (savedSignup) {
@@ -88,13 +90,13 @@
         // get the signups for this date
         var signupQuery = new Parse.Query("Signup");
         var signupJobIds = new Array();
-        signupQuery.equalTo("event_id", selectedDateId);
-        signupQuery.select("event_id", "job");
+        signupQuery.equalTo("event", selectedDateId);
+        signupQuery.select("event", "job_id");
         signupQuery.find({
             success: function (signupResults) {
                 for (var index = 0; index < signupResults.length; index++) {
                     //alert(JSON.stringify(signupResults[index]));
-                    signupJobIds.push(signupResults[index].get("job")["objectId"]);
+                    signupJobIds.push(signupResults[index].get("job_id"));
                 }
             }
         });
