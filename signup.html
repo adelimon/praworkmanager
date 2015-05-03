@@ -38,7 +38,7 @@
 
         var Signup = Parse.Object.extend("Signup");
         var savedSignup = new Signup();
-		alert(data["job"]);
+		console.log(data["job"]);
 		var job = JSON.parse(data["job"]);
         savedSignup.set("name", data["name"]);
         savedSignup.set("event", data["date"]);	
@@ -75,7 +75,16 @@
 			}
 		});
         console.log(JSON.stringify(savedSignup));
-        window.Location.reload(true);
+		var signupAgain = confirm(data["name"] + ", thanks for your help!  Your signup for " + job.job_title + " on " + 
+			job.job_day + " on the event weekend of " + data["date"] + " has been recorded.\n\n" +
+			"Click a button and sign up for another job, or close the window to return to the website." 			
+		);
+
+		if (signupAgain) {
+			window.Location.reload(true);
+		} else {
+			window.Location.reload(true);
+		}
         return false;
     }
 
