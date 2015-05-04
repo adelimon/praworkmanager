@@ -11,19 +11,22 @@
 <script type="text/javascript">
     Parse.initialize("LzoGzGiknLdEUXmyB04WsMS3t564Xl9m9DhFIo6D", "lxPUR3V3ZNA72WqYSD0K8DgVxb6XWzCOvS5CiKcM");
 
+    var dateQuery = new Parse.Query("Signup");
+    dateQuery.equalTo("event", "5-10-2015");
+    dateQuery.ascending("sort_order");
+
+    var reservedQuery = new Parse.Query("Signup");
+    reservedQuery.equalTo("reserved", true);
+
+    var signupQuery = new Parse.Query.or(dateQuery, reservedQuery);
+
     // store a map of names to job ids for the given date, then use them to fill in the signups as appropriate.
     var signUpWithName = new Array();
-
-    var signupQuery = new Parse.Query("Signup");
-    var signupJobIds = new Array();
-    signupQuery.equalTo("event", "5-10-2015");
-    signupQuery.ascending("sort_order");
     signupQuery.find({
         success: function (signupResults) {
             //alert(JSON.stringify(signupResults));
             for (var index = 0; index < signupResults.length; index++) {
                 //alert(JSON.stringify(signupResults[index]));
-                //signupJobIds.push(signupResults[index].get("job_id"));
                 var signup = signupResults[index];
                 signUpWithName[signup.get("job_id")] = signup.get("name");
             }
@@ -91,7 +94,7 @@
     <table class="table table-bordered table-striped table-hover" id="myTable">
         <thead>
             <tr>
-                <th>Name</th>
+                <th class="col-md-2">Name</th>
                 <th>Job Title</th>
                 <th>Points</th>
                 <th>Cash</th>
@@ -99,7 +102,7 @@
                 <th>Paid</th>
                 <th>Points</th>
                 <th>Meal Ticket</th>
-                <th>Signature</th>
+                <th class="col-md-3">Signature</th>
             </tr>
         </thead>
         <tbody>
