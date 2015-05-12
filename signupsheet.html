@@ -8,76 +8,13 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.4.0.min.js"></script>
-<script type="text/javascript">
-    Parse.initialize("LzoGzGiknLdEUXmyB04WsMS3t564Xl9m9DhFIo6D", "lxPUR3V3ZNA72WqYSD0K8DgVxb6XWzCOvS5CiKcM");
-
-    var dateQuery = new Parse.Query("Signup");
-    dateQuery.equalTo("event", "5-10-2015");
-    dateQuery.ascending("sort_order");
-
-    var reservedQuery = new Parse.Query("Signup");
-    reservedQuery.equalTo("reserved", true);
-
-    var signupQuery = new Parse.Query.or(dateQuery, reservedQuery);
-
-    // store a map of names to job ids for the given date, then use them to fill in the signups as appropriate.
-    var signUpWithName = new Array();
-    signupQuery.find({
-        success: function (signupResults) {
-            //alert(JSON.stringify(signupResults));
-            for (var index = 0; index < signupResults.length; index++) {
-                //alert(JSON.stringify(signupResults[index]));
-                var signup = signupResults[index];
-                signUpWithName[signup.get("job_id")] = signup.get("name");
-            }
-        }
-    });
-
-    var jobsQuery = new Parse.Query("Jobs");
-    jobsQuery.limit(250);
-    jobsQuery.ascending("sort_order");
-    jobsQuery.find({
-        success: function (results) {
-            //alert(JSON.stringify(results));
-            //var x = document.getElementById("myTable").rows[0].cells;
-            var rows = document.getElementById("myTable").rows;
-            for (var index = 0; index < results.length; index++) {
-                var job = results[index];
-                var row = rows[index+1];
-                var reserved = job.get("reserved");
-                var signupName = signUpWithName[job.id];
-                if (signupName == undefined) {
-                    signupName = "";
-                }
-                row.cells[0].innerHTML = signupName;
-                var job_title = job.get("job_title");
-                if (reserved) {
-                    job_title = "<b>"+job_title+"</b>";
-                }
-                row.cells[1].innerHTML = job_title;
-                row.cells[2].innerHTML = job.get("point_value");
-                row.cells[3].innerHTML = job.get("cash_value");
-                row.cells[4].innerHTML = job.get("job_day");
-                row.cells[5].innerHTML = "";
-                row.cells[6].innerHTML = "";
-                row.cells[7].innerHTML = "";
-                row.cells[8].innerHTML = "";
-                
-            }
-        }
-    });
-
-</script>
+<script type="text/javascript" src="signupsheet.js"></script>
 <style type="text/css">
     .table {
        font-size: 12px;
     }
     .bs-example{
     	margin: 20px;
-    }
-
-    @page {
-        size: 8.5in 11in;
     }
 
     @media print {
@@ -90,23 +27,23 @@
 </style>
 </head>
 <body>
-<div class="bs-example table-responsive">
+<div class="bs-example">
     <table class="table table-bordered table-striped table-hover" id="myTable">
         <thead>
             <tr>
-                <th class="col-md-2">Name</th>
-                <th>Job Title</th>
-                <th>Points</th>
-                <th>Cash</th>
-                <th>Job Day</th>
-                <th>Paid</th>
-                <th>Points</th>
-                <th>Meal Ticket</th>
+                <th class="col-sm-1">Name</th>
+                <th class="col-sm-1">Job Title</th>
+                <th class="col-sm-1">Points</th>
+                <th class="col-sm-1">Cash</th>
+                <th class="col-sm-1">Job Day</th>
+                <th class="col-sm-1">Paid</th>
+                <th class="col-sm-1">Points</th>
+                <th class="col-sm-1">Meal Ticket</th>
                 <th class="col-md-3">Signature</th>
             </tr>
         </thead>
         <tbody>
-        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
         <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
         <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
         <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
@@ -189,5 +126,11 @@
         </tbody>
     </table>
 </div>
+
+<script type="text/javascript">
+var signupLoader = new SignupSheet();
+    signupLoader.loadSignups();
+</script>
+
 </body>
 </html>
