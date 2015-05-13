@@ -136,11 +136,15 @@
     Parse.Cloud.run("listEvents", {}, {
         success: function (results) {
             var listItems = buildOptionFromParse("", "Select a date");
+            var today = new Date();
             for (var i = 0; i < results.length; i++) {
                 var object = results[i];
                 var eventDate = object.get("eventDate");
                 var dateString = eventDate.getMonth() + 1 + "-" + eventDate.getDate() + "-" + eventDate.getFullYear();
-                listItems += buildOptionFromParse(dateString, dateString);
+                var eventDate = new Date(dateString);
+                if (eventDate > today) {
+                    listItems += buildOptionFromParse(dateString, dateString);
+                }
             }
 
             $("#date").html(listItems);
