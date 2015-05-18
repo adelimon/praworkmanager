@@ -40,6 +40,7 @@ function initSignupForm() {
         js.src = "http://connect.facebook.net/en_US/sdk.js";
         fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
+
 }
 
 function buildOptionFromParse(value, label) {
@@ -101,11 +102,7 @@ function handleSubmit(form) {
                     "Click a button and sign up for another job, or close the window to return to the website."
     );
 
-    if (signupAgain) {
-        window.Location.reload(true);
-    } else {
-        window.Location.reload(true);
-    }
+    window.Location.reload(true);
     return false;
 }
 
@@ -185,6 +182,20 @@ function getHistory() {
     signupQuery.find({
         success: function(results) {
             console.log(JSON.stringify(results));
+            appendToHistory("<ul>");
+            for (var index = 0; index < results.length; index++) {
+                var signup = results[index];
+                var name = signup.get("name");
+                var event = signup.get("event");
+                var job = signup.get("job_title");
+                var points = signup.get("point_value");
+                appendToHistory("<li>"+name+" held the job of <b>"+job+ "</b> ("+points+" points) for the event on " + event + "</li>");
+            }
+            appendToHistory("<ul>");
         }
     });
+}
+
+function appendToHistory(value) {
+    document.getElementById("history").innerHTML += value;
 }
