@@ -5,7 +5,7 @@ var SignupSheet = function() {
 SignupSheet.prototype.loadSignups = function() {
 
     var dateQuery = new Parse.Query("Signup");
-    dateQuery.equalTo("event", "5-10-2015");
+    dateQuery.equalTo("event", "6-7-2015");
     dateQuery.ascending("sort_order");
 
     var reservedQuery = new Parse.Query("Signup");
