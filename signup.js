@@ -84,18 +84,18 @@ function handleSubmit(form) {
             //alert('Failed to create new object, with error code: ' + error.message);
         }
     });
-//            Parse.Cloud.run('sendJobNotification',
-//                    {
-//                        event: data["date"],
-//                        name: data["name"],
-//                        job: job.job_title
-//                    }, {
-//                        success: function (ratings) {
-//                            // ratings should be 4.5
-//                        },
-//                        error: function (error) {
-//                        }
-//                    });
+    Parse.Cloud.run('sendJobNotification',
+        {
+            event: data["date"],
+            name: data["name"],
+            job: job.job_title
+        }, {
+            success: function (ratings) {
+                // ratings should be 4.5
+            },
+            error: function (error) {
+            }
+    });
     console.log(JSON.stringify(savedSignup));
     var signupAgain = confirm(data["name"] + ", thanks for your help!  Your signup for " + job.job_title + " on " +
                     job.job_day + " on the event weekend of " + data["date"] + " has been recorded.\n\n" +
