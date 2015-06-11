@@ -10,7 +10,7 @@ var History = React.createClass({
       comments: (new Parse.Query('Signup')).equalTo("name", "Brian Wolfe")
     };
   },
-
+ 
   render: function() {
     // Render the text of each signup as a list item
     return (

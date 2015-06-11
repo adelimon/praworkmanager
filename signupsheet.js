@@ -1,7 +1,6 @@
 var SignupSheet = function() {
     Parse.initialize("LzoGzGiknLdEUXmyB04WsMS3t564Xl9m9DhFIo6D", "lxPUR3V3ZNA72WqYSD0K8DgVxb6XWzCOvS5CiKcM");
 }
-
 SignupSheet.prototype.loadSignups = function() {
 
     var dateQuery = new Parse.Query("Signup");

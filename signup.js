@@ -83,7 +83,6 @@ function handleSubmit(form) {
             // error is a Parse.Error with an error code and message.
             //alert('Failed to create new object, with error code: ' + error.message);
         }
-        
     });
     console.log(JSON.stringify(savedSignup));
     var signupAgain = confirm(data["name"] + ", thanks for your help!  Your signup for " + job.job_title + " on " +
