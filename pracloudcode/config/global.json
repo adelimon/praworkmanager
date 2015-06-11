@@ -1,0 +1,14 @@
+{
+  "global": {
+    "parseVersion": "1.4.2"
+  },
+  "applications": {
+    "_default": {
+      "link": "praworkmanager"
+    },
+    "praworkmanager": {
+      "applicationId": "LzoGzGiknLdEUXmyB04WsMS3t564Xl9m9DhFIo6D",
+      "masterKey": "f5SfK0pnbcqLgPOunZMu3WKg9BjIE7bU1G5HGnSU"
+    }
+  }
+}
