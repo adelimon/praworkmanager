@@ -21,11 +21,11 @@ Parse.Cloud.afterSave("Signup",
         }, {
             success: function(httpResponse) {
                 console.log(httpResponse);
-                response.success("Email sent!");
+                httpResponse.success("Email sent!");
             },
             error: function(httpResponse) {
                 console.error(httpResponse);
-                response.error("Uh oh, something went wrong");
+                httpResponse.error("Uh oh, something went wrong");
             }
         });        
     }
@@ -42,6 +42,39 @@ Parse.Cloud.define("listEvents",
         eventQuery.find({
             success: function(results) {
                 response.success(results);
+            }
+        });
+    }
+);
+
+Parse.Cloud.define("processSignup",
+    function(request, response) {
+        var job = request.params.job;
+        var name = request.params.name;
+        var date = request.params.date;
+        var Signup = Parse.Object.extend("Signup");
+        var savedSignup = new Signup();
+        savedSignup.set("name", name);
+        savedSignup.set("event", date);
+        savedSignup.set("job_title", job.job_title);
+        savedSignup.set("job_day", job.job_day);
+        savedSignup.set("point_value", job.point_value);
+        savedSignup.set("cash_value", job.cash_value);
+        savedSignup.set("meal_ticket", job.meal_ticket);
+        savedSignup.set("sort_order", job.sort_order);
+        savedSignup.set("job_day", job.job_day);
+        savedSignup.set("job_id", job.objectId);
+        savedSignup.save(null, {
+            success: function(savedSignup) {
+                // Execute any logic that should take place after the object is saved.
+                response.success('New object created with objectId: ' + savedSignup.id);
+                console.log(JSON.stringify(savedSignup));
+            },
+            error: function(savedSignup, error) {
+                // Execute any logic that should take place if the save fails.
+                // error is a Parse.Error with an error code and message.
+                console.log("errored for signup " + JSON.stringify(job));
+                response.error('Failed to create new object, with error code: ' + error.message);
             }
         });
     }

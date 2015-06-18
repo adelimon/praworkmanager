@@ -56,35 +56,15 @@ function handleSubmit(form) {
         data[input.attr("name")] = input.val();
         delete data["undefined"];
     });
-
-
-    var Signup = Parse.Object.extend("Signup");
-    var savedSignup = new Signup();
-    console.log(data["job"]);
+    var name = data["name"];
+    var date = data["date"];
     var job = JSON.parse(data["job"]);
-    savedSignup.set("name", data["name"]);
-    savedSignup.set("event", data["date"]);
-    savedSignup.set("job_title", job.job_title);
-    savedSignup.set("job_day", job.job_day);
-    savedSignup.set("point_value", job.point_value);
-    savedSignup.set("cash_value", job.cash_value);
-    savedSignup.set("meal_ticket", job.meal_ticket);
-    savedSignup.set("sort_order", job.sort_order);
-    savedSignup.set("job_day", job.job_day);
-    savedSignup.set("job_id", job.objectId);
-    //savedSignup.set("job", JSON.parse(data["job"]));
-    savedSignup.save(null, {
-        success: function (savedSignup) {
-            // Execute any logic that should take place after the object is saved.
-            console.log('New object created with objectId: ' + savedSignup.id);
-        },
-        error: function (savedSignup, error) {
-            // Execute any logic that should take place if the save fails.
-            // error is a Parse.Error with an error code and message.
-            //alert('Failed to create new object, with error code: ' + error.message);
-        }
+    Parse.Cloud.run("processSignup", 
+        { name: name, date: date, job: job }, {
+        success: function() {},
+        error: function() {}
     });
-    console.log(JSON.stringify(savedSignup));
+
     var signupAgain = confirm(data["name"] + ", thanks for your help!  Your signup for " + job.job_title + " on " +
                     job.job_day + " on the event weekend of " + data["date"] + " has been recorded.\n\n" +
                     "Click a button and sign up for another job, or close the window to return to the website."
