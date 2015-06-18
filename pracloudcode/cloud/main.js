@@ -47,6 +47,12 @@ Parse.Cloud.define("listEvents",
     }
 );
 
+/**
+ * Process an event signup.
+ * @param request.params.job - JSON object representing the job the useris signing up for.
+ * @param request.params.name - The name of the person signing up.
+ * @param request.params.date - the event date.
+ */
 Parse.Cloud.define("processSignup",
     function(request, response) {
         var job = request.params.job;
