@@ -3,6 +3,21 @@ var SignupSheet = function() {
 }
 SignupSheet.prototype.loadSignups = function() {
 
+    Parse.Cloud.run("listEvents", {}, {
+        success: function (results) {
+            var today = new Date();
+            for (var i = 0; i < results.length; i++) {
+                var object = results[i];
+                var eventDate = object.get("eventDate");
+                var dateString = eventDate.getMonth() + 1 + "-" + eventDate.getDate() + "-" + eventDate.getFullYear();
+                var eventDate = new Date(dateString);
+            }
+
+        },
+        error: function (error) {
+        }
+    });
+
     var dateQuery = new Parse.Query("Signup");
     dateQuery.equalTo("event", "6-7-2015");
     dateQuery.ascending("sort_order");

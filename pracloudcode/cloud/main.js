@@ -1,14 +1,14 @@
 /**
  * Trigger after a signup is entered - send an email.  Do this in cloud code
  * rather than on the client, because that's where it belongs.
-  */
+ */
 Parse.Cloud.afterSave("Signup",
     function(request) {
         var name = request.object.get("name");
         var jobTitle = request.object.get("job_title");
         var event = request.object.get("event");
-        
-        
+
+
         var Mailgun = require("mailgun");
         Mailgun.initialize('sandboxd12b57cf73ce4b56ad3a175e89c5c8e1.mailgun.org', 'key-6d3648873bf6a19a939569cdda457c66');
 
@@ -27,7 +27,7 @@ Parse.Cloud.afterSave("Signup",
                 console.error(httpResponse);
                 httpResponse.error("Uh oh, something went wrong");
             }
-        });        
+        });
     }
 );
 
@@ -48,10 +48,38 @@ Parse.Cloud.define("listEvents",
 );
 
 /**
+ * Get the next event that we have coming up.
+ * @return the next event's date object.
+ */
+Parse.Cloud.define("getNextEvent",
+    function(request, response) {
+        var eventQuery = new Parse.Query("ScheduleDates");
+        var moment = require("moment");
+        eventQuery.ascending("eventDate");
+        eventQuery.find({
+            success: function(results) {
+                var dateArray = [];
+                var now = new Date();
+                var nextDate;
+                for (var index = 0; index < results.length; index++) {
+                    var date = results[index].get("eventDate");
+                    if (date.getTime() > now.getTime()) {
+                        nextDate = moment(date).format("M-D-YYYY");
+                        break;
+                    }
+                }
+                response.success(nextDate);
+            }
+        });
+    }
+);
+
+
+/**
  * Process an event signup.
  * @param request.params.job - JSON object representing the job the useris signing up for.
  * @param request.params.name - The name of the person signing up.
- * @param request.params.date - the event date.
+ * @param request.params.date - the event data
  */
 Parse.Cloud.define("processSignup",
     function(request, response) {
