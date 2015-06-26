@@ -169,7 +169,7 @@ Parse.Cloud.define(
                     });
                 }
                 console.log(JSON.stringify(signups));
-                response.signups = signups;
+                response.success = signups;
                 //console.log(signups.length);
             }
         });
