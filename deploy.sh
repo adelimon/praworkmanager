@@ -5,7 +5,7 @@ if test "$#" -ne 1; then
 fi
 echo "Starting deploy...."
 echo "Committing to github...."
-git add .
+git add --all ./
 git commit -m "$1"
 git push -u origin master
 echo "ftp push to bluehost...."
