@@ -3,10 +3,11 @@
 var Parse = require('parse').Parse;
 
 Parse.initialize("LzoGzGiknLdEUXmyB04WsMS3t564Xl9m9DhFIo6D", "lxPUR3V3ZNA72WqYSD0K8DgVxb6XWzCOvS5CiKcM");
+var signupDate = "6-7-2015";
 
 // Get the signups for a given date
 var dateQuery = new Parse.Query("Signup");
-dateQuery.equalTo("event", "6-7-2015");
+dateQuery.equalTo("event", signupDate);
 dateQuery.ascending("sort_order");
 
 var reservedQuery = new Parse.Query("Signup");
@@ -52,9 +53,8 @@ jobsQuery.find({
                 job_day: job.get("job_day"),
                 reserved: job.get("reserved")
             });
-            //console.log(signupList.length);
         }
-        //console.log(JSON.stringify(signups));
+        console.log(JSON.stringify(signups));
         //console.log(signups.length);
     }
 });
