@@ -1,18 +1,11 @@
 #!/bin/bash
-if test "$#" -ne 1; then
-    echo "Enter a github commit message"
-    exit 1
-fi
-echo "Starting deploy...."
-echo "Committing to github...."
-git add --all ./
-git commit -m "$1"
-git push -u origin master
+echo "starting deploy..."
+bash commit.sh
 echo "ftp push to bluehost...."
 git ftp push
 echo "pushing cloud code and html and javascript to parse...."
 cp *.html ~/workspace/pracloudcode/public
-#mv ~/workspace/pracloudcode/public/signup.html ~/workspace/pracloudcode/public/index.html
+mv ~/workspace/pracloudcode/public/signup.html ~/workspace/pracloudcode/public/index.html
 cp *.js ~/workspace/pracloudcode/public
 cd pracloudcode
 parse deploy
