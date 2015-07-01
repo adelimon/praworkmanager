@@ -21,8 +21,8 @@ function BuildExcelSignup(signupDate) {
     // abstract trick to reference the outer scope from the inner scope.
     // ugly but fnctional!
     var be = this;
-    jobsQuery.find({
-        success: function(results) {
+    jobsQuery.find().then(
+        function(results) {
             var signups = new Array();
             for (var index = 0; index < results.length; index++) {
                 var job = results[index];
@@ -64,8 +64,7 @@ function BuildExcelSignup(signupDate) {
                 .then(function() {
                     // done
                 });
-        }
-    });
+        });
 }
 /**
  * Initialize the connection to Parse, so that it can be used throughout the class.
@@ -97,16 +96,15 @@ BuildExcelSignup.prototype.findExistingSignups = function(signupDate) {
 
     // store a map of names to job ids for the given date, then use them to fill in the signups as appropriate.
     var signUpWithName = new Array();
-    signupQuery.find({
-        success: function(signupResults) {
+    signupQuery.find().then(
+        function(signupResults) {
             for (var index = 0; index < signupResults.length; index++) {
-                //alert(JSON.stringify(signupResults[index]));
                 var signup = signupResults[index];
                 var jobId = signup.get("job_id");
                 signUpWithName[jobId] = signup.get("name");
             }
         }
-    });
+    );
     return signUpWithName;
 }
 
@@ -161,7 +159,9 @@ BuildExcelSignup.prototype.applyRowStyles = function(row, rowNumber, isBold) {
     row.font = {
         bold: isBold
     };
-    var borderStyle = {style: "thin"};
+    var borderStyle = {
+        style: "thin"
+    };
     row.border = {
         top: borderStyle,
         left: borderStyle,
