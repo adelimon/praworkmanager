@@ -1,5 +1,13 @@
 "use strict";
 
+/**
+ * Represents an excel signup sheet that can be built from Parse data.
+ * @class
+ * @constructor
+ * @requires module:parse
+ * @requires module:exceljs
+ * @param {string} signup date to get data for.
+ */
 function BuildExcelSignup(signupDate) {
 
     this.initParse();
@@ -10,6 +18,8 @@ function BuildExcelSignup(signupDate) {
     var jobsQuery = new this.parse.Query("Jobs");
     jobsQuery.limit(250);
     jobsQuery.ascending("sort_order");
+    // abstract trick to reference the outer scope from the inner scope.
+    // ugly but fnctional!
     var be = this;
     jobsQuery.find({
         success: function(results) {
@@ -45,9 +55,6 @@ function BuildExcelSignup(signupDate) {
                 row.push(signup.cash);
                 row.push("Pd / Pts")
                 sheet.addRow(row);
-                // now check to see if the job is reserved, and if so, bold the row
-                // excel uses 1 based indeces, so add 2 to the row number to find
-                // the actual row
 
                 // apply styles to the row.  If the job is reserved, then bold the font
                 be.applyRowStyles(sheet.lastRow, index, signup.reserved);
@@ -57,15 +64,26 @@ function BuildExcelSignup(signupDate) {
                 .then(function() {
                     // done
                 });
-            //console.log(signups.length);
         }
     });
 }
+/**
+ * Initialize the connection to Parse, so that it can be used throughout the class.
+ * @returns void
+ */
 BuildExcelSignup.prototype.initParse = function() {
     this.parse = require('parse').Parse;
     this.parse.initialize("LzoGzGiknLdEUXmyB04WsMS3t564Xl9m9DhFIo6D", "lxPUR3V3ZNA72WqYSD0K8DgVxb6XWzCOvS5CiKcM");
 }
 
+/**
+ * Find the existing signups for a given date.  This returns an array of
+ * jobid -> name pairings.  Note this function will pick up both reserved 
+ * signups (typically set for the year), as well as signups entered online
+ * or by the admin.
+ * @param {string} signupDate date for the signups
+ * @returns {Array} an associative array of signup ids to names.
+ */
 BuildExcelSignup.prototype.findExistingSignups = function(signupDate) {
     // Get the signups for a given date
     var dateQuery = new this.parse.Query("Signup");
@@ -92,6 +110,10 @@ BuildExcelSignup.prototype.findExistingSignups = function(signupDate) {
     return signUpWithName;
 }
 
+/**
+ * Build an excel workbook with fields pre-filled in the header. 
+ * @returns {Workbook} an excel workbook object from the exceljs package.
+ */
 BuildExcelSignup.prototype.buildworkbook = function() {
     var Excel = require("exceljs");
 
@@ -127,24 +149,24 @@ BuildExcelSignup.prototype.buildworkbook = function() {
     return workbook;
 }
 
+/**
+ * Apply styles to the row.  This will apply a static style to each row.
+ * @param {Row} row a row of a worksheet from the ExcelJS package.
+ * @param {int} rowNumber the row number.
+ * @param {boolean} whether or not the row should be bolded. This is TYPICALLY
+ *  based on data in the row but can be whatever you want.
+ * @returns void
+ */
 BuildExcelSignup.prototype.applyRowStyles = function(row, rowNumber, isBold) {
     row.font = {
         bold: isBold
     };
-
+    var borderStyle = {style: "thin"};
     row.border = {
-        top: {
-            style: "thin"
-        },
-        left: {
-            style: "thin"
-        },
-        bottom: {
-            style: "thin"
-        },
-        right: {
-            style: "thin"
-        }
+        top: borderStyle,
+        left: borderStyle,
+        bottom: borderStyle,
+        right: borderStyle
     };
     row.height = 25;
     if (rowNumber % 2) {
