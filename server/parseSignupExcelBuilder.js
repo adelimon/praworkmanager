@@ -5,7 +5,6 @@
  * @class
  * @constructor
  * @requires module:parse
- * @requires module:exceljs
  * @param {string} signup date to get data for.
  */
 function BuildExcelSignup(signupDate) {
@@ -18,9 +17,6 @@ function BuildExcelSignup(signupDate) {
     var jobsQuery = new this.parse.Query("Jobs");
     jobsQuery.limit(250);
     jobsQuery.ascending("sort_order");
-    // abstract trick to reference the outer scope from the inner scope.
-    // ugly but fnctional!
-    var be = this;
     jobsQuery.find().then(
         function(results) {
             var signups = new Array();
@@ -42,29 +38,10 @@ function BuildExcelSignup(signupDate) {
             // now taht we have all sign ups, build a worksheet in Excel.
             // reference the workbook here, becuase we need to call it to save
             // the file to disk.
-            var workbook = be.buildworkbook();
-            var sheet = workbook.getWorksheet(1);
-            // put the data in the sheet
-            for (var index in signups) {
-                var signup = signups[index];
-                console.log(JSON.stringify(signups[index]));
-                var row = [];
-                row.push(signup.name);
-                row.push(signup.title);
-                row.push(signup.points);
-                row.push(signup.cash);
-                row.push("Pd / Pts")
-                sheet.addRow(row);
-
-                // apply styles to the row.  If the job is reserved, then bold the font
-                be.applyRowStyles(sheet.lastRow, index, signup.reserved);
-            }
-
-            workbook.xlsx.writeFile("prasignups.xlsx")
-                .then(function() {
-                    // done
-                });
-        });
+            var SignupWorkbook = require("./signupworkbook");
+            var workbook = new SignupWorkbook(signups, "prasignups" + new Date().getTime() + ".xlsx");
+        }
+    );
 }
 /**
  * Initialize the connection to Parse, so that it can be used throughout the class.
@@ -106,78 +83,6 @@ BuildExcelSignup.prototype.findExistingSignups = function(signupDate) {
         }
     );
     return signUpWithName;
-}
-
-/**
- * Build an excel workbook with fields pre-filled in the header. 
- * @returns {Workbook} an excel workbook object from the exceljs package.
- */
-BuildExcelSignup.prototype.buildworkbook = function() {
-    var Excel = require("exceljs");
-
-    var workbook = new Excel.Workbook();
-    workbook.creator = "PRA work manager system";
-    workbook.lastModifiedBy = workbook.creator;
-    workbook.created = new Date();
-    workbook.modified = new Date();
-
-    var sheet = workbook.addWorksheet("Signups");
-    sheet.columns = [{
-        header: "Name",
-        width: 17
-    }, {
-        header: "Job Title",
-        width: 32
-    }, {
-        header: "Points",
-        width: 10
-    }, {
-        header: "Cash",
-        width: 10,
-        style: {
-            numFmt: "$0.00"
-        }
-    }, {
-        header: "Paid/Points",
-        width: 10
-    }, {
-        header: "Signature",
-        width: 42
-    }];
-    return workbook;
-}
-
-/**
- * Apply styles to the row.  This will apply a static style to each row.
- * @param {Row} row a row of a worksheet from the ExcelJS package.
- * @param {int} rowNumber the row number.
- * @param {boolean} whether or not the row should be bolded. This is TYPICALLY
- *  based on data in the row but can be whatever you want.
- * @returns void
- */
-BuildExcelSignup.prototype.applyRowStyles = function(row, rowNumber, isBold) {
-    row.font = {
-        bold: isBold
-    };
-    var borderStyle = {
-        style: "thin"
-    };
-    row.border = {
-        top: borderStyle,
-        left: borderStyle,
-        bottom: borderStyle,
-        right: borderStyle
-    };
-    row.height = 25;
-    if (rowNumber % 2) {
-        row.fill = {
-            type: "pattern",
-            pattern: "solid",
-            fgColor: {
-                argb: "e5e5e5"
-            }
-        };
-    }
 }
 
 var b = new BuildExcelSignup("6-7-2015");
