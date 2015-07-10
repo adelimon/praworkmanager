@@ -19,7 +19,7 @@ var SignupWorkbook = module.exports = function(signupList, fileName) {
     var sheet = this.workbook.addWorksheet("Signups");
     sheet.columns = [{
         header: "Name",
-        width: 17
+        width: 17,
     }, {
         header: "Job Title",
         width: 32

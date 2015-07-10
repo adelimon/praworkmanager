@@ -1,19 +1,27 @@
-//Lets require/import the HTTP module
 var http = require('http');
+var fs = require("fs");
+var url = require("url");
 
-//Lets define a port we want to listen to
-const PORT=8080; 
+http.createServer(
+  function(req, res) {
 
-//We need a function which handles requests and send response
-function handleRequest(request, response){
-    response.end('It Works!! Path Hit: ' + request.url);
-}
+    var params = url.parse(req.url, true).query;
+    var dateParam = params.date;
 
-//Create a server
-var server = http.createServer(handleRequest);
+    if (dateParam === undefined) {
+      res.write("Date not requested...");
+    }
+    else {
+        var fileName = "prasignups" + dateParam + ".xlsx";
+        console.log("retrieving file for " + fileName);
+        var fileContext = fs.readFileSync(fileName);
+        res.setHeader('Content-disposition', 'attachment; filename=' + fileName);
+        res.writeHead(200, {
+          'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        });
+        res.end(fileContext);
+    }
 
-//Lets start our server
-server.listen(PORT, function(){
-    //Callback triggered when server is successfully listening. Hurray!
-    console.log("Server listening on: http://localhost:%s", process.env.PORT);
-});
+    res.end(JSON.stringify(params));
+  }
+).listen(process.env.PORT, process.env.IP);

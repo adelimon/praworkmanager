@@ -39,7 +39,7 @@ function BuildExcelSignup(signupDate) {
             // reference the workbook here, becuase we need to call it to save
             // the file to disk.
             var SignupWorkbook = require("./signupworkbook");
-            var workbook = new SignupWorkbook(signups, "prasignups" + new Date().getTime() + ".xlsx");
+            var workbook = new SignupWorkbook(signups, "prasignups" + signupDate + ".xlsx");
         }
     );
 }
