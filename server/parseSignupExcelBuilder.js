@@ -7,7 +7,7 @@
  * @requires module:parse
  * @param {string} signup date to get data for.
  */
-function BuildExcelSignup(signupDate) {
+var BuildExcelSignup = module.exports = function(signupDate) {
 
     this.initParse();
 
@@ -43,46 +43,47 @@ function BuildExcelSignup(signupDate) {
         }
     );
 }
-/**
- * Initialize the connection to Parse, so that it can be used throughout the class.
- * @returns void
- */
-BuildExcelSignup.prototype.initParse = function() {
-    this.parse = require('parse').Parse;
-    this.parse.initialize("LzoGzGiknLdEUXmyB04WsMS3t564Xl9m9DhFIo6D", "lxPUR3V3ZNA72WqYSD0K8DgVxb6XWzCOvS5CiKcM");
-}
 
-/**
- * Find the existing signups for a given date.  This returns an array of
- * jobid -> name pairings.  Note this function will pick up both reserved 
- * signups (typically set for the year), as well as signups entered online
- * or by the admin.
- * @param {string} signupDate date for the signups
- * @returns {Array} an associative array of signup ids to names.
- */
-BuildExcelSignup.prototype.findExistingSignups = function(signupDate) {
-    // Get the signups for a given date
-    var dateQuery = new this.parse.Query("Signup");
-    dateQuery.equalTo("event", signupDate);
-    dateQuery.ascending("sort_order");
+BuildExcelSignup.prototype = {
+    /**
+     * Initialize the connection to Parse, so that it can be used throughout the class.
+     * @returns void
+     */
+    initParse: function() {
+        this.parse = require('parse').Parse;
+        this.parse.initialize("LzoGzGiknLdEUXmyB04WsMS3t564Xl9m9DhFIo6D", "lxPUR3V3ZNA72WqYSD0K8DgVxb6XWzCOvS5CiKcM");
+    },
 
-    var reservedQuery = new this.parse.Query("Signup");
-    reservedQuery.equalTo("reserved", true);
+    /**
+     * Find the existing signups for a given date.  This returns an array of
+     * jobid -> name pairings.  Note this function will pick up both reserved 
+     * signups (typically set for the year), as well as signups entered online
+     * or by the admin.
+     * @param {string} signupDate date for the signups
+     * @returns {Array} an associative array of signup ids to names.
+     */
+    findExistingSignups: function(signupDate) {
+        // Get the signups for a given date
+        var dateQuery = new this.parse.Query("Signup");
+        dateQuery.equalTo("event", signupDate);
+        dateQuery.ascending("sort_order");
 
-    var signupQuery = new this.parse.Query.or(dateQuery, reservedQuery);
+        var reservedQuery = new this.parse.Query("Signup");
+        reservedQuery.equalTo("reserved", true);
 
-    // store a map of names to job ids for the given date, then use them to fill in the signups as appropriate.
-    var signUpWithName = new Array();
-    signupQuery.find().then(
-        function(signupResults) {
-            for (var index = 0; index < signupResults.length; index++) {
-                var signup = signupResults[index];
-                var jobId = signup.get("job_id");
-                signUpWithName[jobId] = signup.get("name");
+        var signupQuery = new this.parse.Query.or(dateQuery, reservedQuery);
+
+        // store a map of names to job ids for the given date, then use them to fill in the signups as appropriate.
+        var signUpWithName = new Array();
+        signupQuery.find().then(
+            function(signupResults) {
+                for (var index = 0; index < signupResults.length; index++) {
+                    var signup = signupResults[index];
+                    var jobId = signup.get("job_id");
+                    signUpWithName[jobId] = signup.get("name");
+                }
             }
-        }
-    );
-    return signUpWithName;
+        );
+        return signUpWithName;
+    }
 }
-
-var b = new BuildExcelSignup("6-7-2015");
