@@ -8,9 +8,10 @@
  * @param {string} signup date to get data for.
  */
 var BuildExcelSignup = module.exports = function(signupDate) {
-
+    var file = "prasignups"+signupDate+".xlsx";
+    this.fileName = file;
     this.initParse();
-
+    
     var signUpWithName = this.findExistingSignups(signupDate);
 
     // find all the jobs 
@@ -39,7 +40,7 @@ var BuildExcelSignup = module.exports = function(signupDate) {
             // reference the workbook here, becuase we need to call it to save
             // the file to disk.
             var SignupWorkbook = require("./signupworkbook");
-            var workbook = new SignupWorkbook(signups, "prasignups" + signupDate + ".xlsx");
+            var workbook = new SignupWorkbook(signups, file);
         }
     );
 }
