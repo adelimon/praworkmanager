@@ -17,7 +17,7 @@ Parse.Cloud.afterSave("Signup",
             to: "adelimon@gmail.com, hogbacksecretary@gmail.com, dlstone727@yahoo.com",
             from: "signup@palmyramx.com",
             subject: msgSubject,
-            text: msgSubject + ". Please see the signup sheet for details."
+            text: msgSubject + ". Please see the signup sheet for details.  The list is available at http://apps.palmyramx.com/signupsheets.html"
         }, {
             success: function(httpResponse) {
                 console.log(httpResponse);

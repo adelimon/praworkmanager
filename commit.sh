@@ -7,3 +7,5 @@ echo "Committing to github...."
 git add --all ./
 git commit -m "$1"
 git push -u origin master
+cd pracloudcode
+parse deploy
