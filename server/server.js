@@ -9,6 +9,8 @@ app.get('/', function(req, res) {
 
 });
 
+app.use(express.static('../html'));
+
 app.get('/signup/:date', function(req, res) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");

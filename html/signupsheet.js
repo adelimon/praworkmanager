@@ -30,8 +30,8 @@ SignupSheet.prototype.loadSignups = function() {
     // store a map of names to job ids for the given date, then use them to fill in the signups as appropriate.
     var signUpWithName = new Array();
     var signupDates = new Array();
-    signupQuery.find({
-        success: function (signupResults) {
+    signupQuery.find().then(
+        function (signupResults) {
             //alert(JSON.stringify(signupResults));
             for (var index = 0; index < signupResults.length; index++) {
                 //alert(JSON.stringify(signupResults[index]));
@@ -41,13 +41,13 @@ SignupSheet.prototype.loadSignups = function() {
                 signupDates[jobId] = signup.createdAt;
             }
         }
-    });
+    );
 
     var jobsQuery = new Parse.Query("Jobs");
     jobsQuery.limit(250);
     jobsQuery.ascending("sort_order");
-    jobsQuery.find({
-        success: function (results) {
+    jobsQuery.find().then( 
+        function (results) {
             //alert(JSON.stringify(results));
             //var x = document.getElementById("myTable").rows[0].cells;
             var rows = document.getElementById("myTable").rows;
@@ -77,5 +77,5 @@ SignupSheet.prototype.loadSignups = function() {
                 }
             }
         }
-    });
+    );
 }
