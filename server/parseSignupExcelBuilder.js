@@ -23,9 +23,12 @@ var BuildExcelSignup = module.exports = function(signupDate) {
             var signups = new Array();
             for (var index = 0; index < results.length; index++) {
                 var job = results[index];
-                var signupName = signUpWithName[job.id];
-                if (signupName == undefined) {
-                    signupName = "";
+                var signupInfo = signUpWithName[job.id];
+                var signupName = "";
+                var signupId = "";
+                if (signupInfo !== undefined) {
+                    signupName = signupInfo.split("|")[0];
+                    signupId = signupInfo.split("|")[1];
                 }
                 signups.push({
                     name: signupName,
@@ -33,7 +36,8 @@ var BuildExcelSignup = module.exports = function(signupDate) {
                     points: job.get("point_value"),
                     cash: job.get("cash_value"),
                     job_day: job.get("job_day"),
-                    reserved: job.get("reserved")
+                    reserved: job.get("reserved"),
+                    parseId: signupId
                 });
             }
             // now taht we have all sign ups, build a worksheet in Excel.
@@ -81,7 +85,7 @@ BuildExcelSignup.prototype = {
                 for (var index = 0; index < signupResults.length; index++) {
                     var signup = signupResults[index];
                     var jobId = signup.get("job_id");
-                    signUpWithName[jobId] = signup.get("name");
+                    signUpWithName[jobId] = signup.get("name") + "|" + signup.id;
                 }
             }
         );

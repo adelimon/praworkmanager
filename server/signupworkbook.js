@@ -38,11 +38,13 @@ var SignupWorkbook = module.exports = function(signupList, fileName) {
     }, {
         header: "Signature",
         width: 42
+    }, {
+        header: "parseId", 
+        width: 0
     }];
     this.addSignups();
     this.writeWorkbook();
 }
-
 SignupWorkbook.prototype = {
 
     addSignups: function() {
@@ -56,11 +58,15 @@ SignupWorkbook.prototype = {
             row.push(signup.title);
             row.push(signup.points);
             row.push(signup.cash);
-            row.push("Pd / Pts")
+            row.push("Pd / Pts");
+            row.push("");
+            row.push(signup.parseId);
+            
             sheet.addRow(row);
             // apply styles to the row.  If the job is reserved, then bold the font
             this.applyRowStyles(sheet.lastRow, index, signup.reserved);
         }
+
         this.writeWorkbook();
     },
 
