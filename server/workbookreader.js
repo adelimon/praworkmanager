@@ -53,6 +53,7 @@ var WorkbookReader = module.exports = function(filename) {
                                 job.meal_ticket = jobInfo.get("meal_ticket");
                                 job.sort_order = jobInfo.get("sort_order");
                                 job.job_day = jobInfo.get("job_day");
+                                job.reserved = jobInfo.get("reserved");
                                 job.objectId = jobInfo.id;
                                 console.log(incomingName + " " + JSON.stringify(job));
                                 // create a Parse object with this name and job title
@@ -77,4 +78,4 @@ var WorkbookReader = module.exports = function(filename) {
 
 }
 
-var reader = new WorkbookReader("prasignups6-7-2015.xlsx");
+var reader = new WorkbookReader(process.argv[2];
