@@ -77,5 +77,3 @@ var WorkbookReader = module.exports = function(filename) {
         });
 
 }
-
-var reader = new WorkbookReader(process.argv[2];

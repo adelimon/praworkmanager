@@ -1,7 +1,6 @@
 var express = require('express');
 var fs = require("fs");
-
-
+var multer  = require('multer')
 var app = express();
 
 app.get('/', function(req, res) {
@@ -48,6 +47,14 @@ app.get('/latest', function(req, res) {
     fs.unlinkSync(latestXlsFileName);
 });
 
+var upload = multer({ dest: 'uploads/' });
+app.post('/upload', upload.single('uploadFile'), function(req, res, next) {
+    const fileInfo = JSON.stringify(req.file, null, 4);
+    console.log(fileInfo);
+    var WorkbookReader = require("./workbookreader");
+    var reader = new WorkbookReader(req.file.path);
+    res.send(fileInfo);
+});
 
 var server = app.listen(process.env.PORT, function() {
     var host = server.address().address;
