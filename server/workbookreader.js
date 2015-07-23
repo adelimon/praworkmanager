@@ -9,10 +9,13 @@ var WorkbookReader = module.exports = function(filename) {
     workbook.xlsx.readFile(filename)
         .then(function() {
             var worksheet = workbook.getWorksheet(1);
+            var lastRow = worksheet.lastRow;
+            var signupDate = lastRow.values[1];
+            console.log(signupDate);
             worksheet.eachRow(function(row, rowNumber) {
-                if (rowNumber > 1) {
+                if ((rowNumber > 1) && (row !== worksheet.lastRow)) {
                     var incomingName = row.values[1];
-                    var job = row.values[2];
+                    var jobTitle = row.values[2];
                     var id = row.values[7];
                     var jobId = row.values[8];
                     var noId = (id === undefined);
@@ -29,25 +32,48 @@ var WorkbookReader = module.exports = function(filename) {
                                 if (existingSignup.get("name") !== incomingName) {
                                     existingSignup.set("name", incomingName);
                                     existingSignup.save();
-                                } else {
-                                    console.log("No update for " + incomingName + "/" + job + " as it is unchanged.")
+                                }
+                                else {
+                                    console.log("No update for " + incomingName + "/" + jobTitle + " as it is unchanged.");
                                 }
                             }
                         );
                     }
                     if (isNew) {
-                        console.log("New: " + incomingName + " == " + job + id + " " + jobId);
                         // first look up the job by id to get all the needed information.
-                        // create a Parse object with this name and job title
-                        
-                        // however, you also need a specific id to associate to.
-                        
+                        var jobQuery = new parse.Query("Jobs");
+                        jobQuery.get(jobId).then(
+                            function(jobInfo) {
+                                // now that we have a job, save a signup for it with all the info.
+                                var job = {};
+                                job.job_title = jobInfo.get("job_title");
+                                job.job_day = jobInfo.get("job_day");
+                                job.point_value = jobInfo.get("point_value");
+                                job.cash_value = jobInfo.get("cash_value");
+                                job.meal_ticket = jobInfo.get("meal_ticket");
+                                job.sort_order = jobInfo.get("sort_order");
+                                job.job_day = jobInfo.get("job_day");
+                                job.objectId = jobInfo.id;
+                                console.log(incomingName + " " + JSON.stringify(job));
+                                // create a Parse object with this name and job title
+                                
+                                parse.Cloud.run("processSignup", {
+                                    name: incomingName,
+                                    // TODO need a real date value here.
+                                    date: signupDate,
+                                    job: job
+                                }, {
+                                    success: function() {},
+                                    error: function() {}
+                                });
+                                
+                            }
+                        );
                     }
-                    
+
                 }
             });
-        }
-    );
+        });
 
 }
 
