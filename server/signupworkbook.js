@@ -7,7 +7,7 @@
  * @param {string} fileName the name of the file to write.
  * @requires module:exceljs
  */
-var SignupWorkbook = module.exports = function(signupList, fileName) {
+var SignupWorkbook = module.exports = function(signupList, fileName, date) {
     var Excel = require("exceljs");
     this.workbook = new Excel.Workbook();
     this.workbook.creator = "PRA work manager system";
@@ -15,6 +15,7 @@ var SignupWorkbook = module.exports = function(signupList, fileName) {
     this.workbook.created = new Date();
     this.workbook.modified = new Date();
     this.signups = signupList;
+    this.eventDate = date;
     this.file = fileName;
     var sheet = this.workbook.addWorksheet("Signups");
     sheet.columns = [{
@@ -39,10 +40,21 @@ var SignupWorkbook = module.exports = function(signupList, fileName) {
         header: "Signature",
         width: 42
     }, {
+        // this is a "system" column to make uploads easier.  It does not 
+        // print, but is still readable in uploads since it's hidden. 
         header: "parseId", 
+        width: 0
+    }, {
+        // same as above :)
+        header: "jobId", 
+        width: 0
+    }, {
+        // me three
+        header: "eventDate", 
         width: 0
     }];
     this.addSignups();
+    
     this.writeWorkbook();
 }
 SignupWorkbook.prototype = {
@@ -61,15 +73,28 @@ SignupWorkbook.prototype = {
             row.push("Pd / Pts");
             row.push("");
             row.push(signup.parseId);
-            
+            row.push(signup.jobId);
+            row.push(signup.eventDate);
             sheet.addRow(row);
             // apply styles to the row.  If the job is reserved, then bold the font
             this.applyRowStyles(sheet.lastRow, index, signup.reserved);
         }
-
+        this.addEventDate();
         this.writeWorkbook();
     },
 
+    addEventDate: function() {
+        var sheet = this.getWorksheet();
+        // add a row with a height of zero to "hide" the event date.  This is 
+        // important system level information to an uploaded sheet, but it means
+        // jack shit to an editor or printer of this sheet :)
+        var row = [];
+        row.push(this.eventDate);
+        sheet.addRow(row);
+        // YOU CAN'T SEE ME! But i'm here, like a creepy Unkle
+        sheet.lastRow.height = 0;
+    },
+    
     getWorksheet: function() {
         return this.workbook.getWorksheet(1);
     },

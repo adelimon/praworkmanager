@@ -37,14 +37,15 @@ var BuildExcelSignup = module.exports = function(signupDate) {
                     cash: job.get("cash_value"),
                     job_day: job.get("job_day"),
                     reserved: job.get("reserved"),
-                    parseId: signupId
+                    parseId: signupId, 
+                    jobId: job.id
                 });
             }
             // now taht we have all sign ups, build a worksheet in Excel.
             // reference the workbook here, becuase we need to call it to save
             // the file to disk.
             var SignupWorkbook = require("./signupworkbook");
-            var workbook = new SignupWorkbook(signups, file);
+            var workbook = new SignupWorkbook(signups, file, signupDate);
         }
     );
 }

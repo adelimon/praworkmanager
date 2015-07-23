@@ -14,8 +14,10 @@ var WorkbookReader = module.exports = function(filename) {
                     var incomingName = row.values[1];
                     var job = row.values[2];
                     var id = row.values[7];
-                    var isUpdate = (id.length > 0);
-                    var isNew = ((id.length == 0) && (incomingName.length > 0));
+                    var jobId = row.values[8];
+                    var noId = (id === undefined);
+                    var isUpdate = ((!noId && (id.length > 0)));
+                    var isNew = (((noId) || (id.length == 0)) && (incomingName.length > 0));
                     if (isUpdate) {
                         // if the row has an id, then we are updating it.  So run the 
                         // parse query to get it, then change the name.
@@ -34,7 +36,11 @@ var WorkbookReader = module.exports = function(filename) {
                         );
                     }
                     if (isNew) {
-                        console.log("New: " + incomingName + " == " + job + id);
+                        console.log("New: " + incomingName + " == " + job + id + " " + jobId);
+                        // first look up the job by id to get all the needed information.
+                        // create a Parse object with this name and job title
+                        
+                        // however, you also need a specific id to associate to.
                         
                     }
                     
