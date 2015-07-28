@@ -107,7 +107,7 @@ function populateJobs() {
                 var job = results[i];
                 if (signupJobIds.indexOf(job.id) == -1) {
                     listItems += buildOptionFromParse(
-                            JSON.stringify(job), job.get("job_title")
+                            JSON.stringify(job), job.get("job_title")+" ("+job.get("job_day")+")"
                     );
                 }
             }
