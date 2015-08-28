@@ -1,9 +1,10 @@
+var EVENT_DATE = "";
 function initSignupForm() {
     Parse.initialize("LzoGzGiknLdEUXmyB04WsMS3t564Xl9m9DhFIo6D", "lxPUR3V3ZNA72WqYSD0K8DgVxb6XWzCOvS5CiKcM");
 
     Parse.Cloud.run("listEvents", {}, {
         success: function (results) {
-            var listItems = buildOptionFromParse("", "Select a date");
+            var listItems;
             var today = new Date();
             for (var i = 0; i < results.length; i++) {
                 var object = results[i];
@@ -12,10 +13,16 @@ function initSignupForm() {
                 var eventDate = new Date(dateString);
                 if (eventDate > today) {
                     listItems += buildOptionFromParse(dateString, dateString);
+                    EVENT_DATE = eventDate;
+                    // only take the first entry, and break after that.
+                    break;
                 }
             }
 
             $("#date").html(listItems);
+            // populate the jobs from the next event date, this takes out the need for using the drop down to pick dates.
+            
+            populateJobs();
         },
         error: function (error) {
         }
@@ -44,7 +51,7 @@ function initSignupForm() {
 }
 
 function buildOptionFromParse(value, label) {
-    return "<option value='" + value + "'>" + label + "</option>";
+    return "<option selected value='" + value + "'>" + label + "</option>";
 }
 
 function handleSubmit(form) {
@@ -85,7 +92,7 @@ function populateJobs() {
     // get the signups for this date
     var signupQuery = new Parse.Query("Signup");
     var signupJobIds = new Array();
-    signupQuery.equalTo("event", selectedDateId);
+    signupQuery.equalTo("event", EVENT_DATE);
     signupQuery.select("event", "job_id");
     signupQuery.find({
         success: function (signupResults) {
