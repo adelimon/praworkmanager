@@ -7,6 +7,7 @@ Parse.Cloud.afterSave("Signup",
         var name = request.object.get("name");
         var jobTitle = request.object.get("job_title");
         var event = request.object.get("event");
+        var jobLeader = request.object.get("leader_email");
 
 
         var Mailgun = require("mailgun");
@@ -14,7 +15,7 @@ Parse.Cloud.afterSave("Signup",
 
         var msgSubject = name + " signed up for " + jobTitle + " on " + event;
         Mailgun.sendEmail({
-            to: "adelimon@gmail.com, hogbacksecretary@gmail.com, dlstone727@yahoo.com",
+            to: "adelimon@gmail.com, hogbacksecretary@gmail.com," + jobLeader,
             from: "signup@palmyramx.com",
             subject: msgSubject,
             text: msgSubject + ". Please see the signup sheet for details.  The list is available at http://apps.palmyramx.com/signupsheets.html"
@@ -28,6 +29,7 @@ Parse.Cloud.afterSave("Signup",
                 httpResponse.error("Uh oh, something went wrong");
             }
         });
+        
     }
 );
 
@@ -98,6 +100,7 @@ Parse.Cloud.define("processSignup",
         savedSignup.set("sort_order", job.sort_order);
         savedSignup.set("job_day", job.job_day);
         savedSignup.set("job_id", job.objectId);
+        savedSignup.set("leader_email", job.leader_email);
         savedSignup.save(null, {
             success: function(savedSignup) {
                 // Execute any logic that should take place after the object is saved.

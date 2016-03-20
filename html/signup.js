@@ -1,5 +1,7 @@
 var EVENT_DATE = "";
+var EVENT_TYPE = "RACE";
 function initSignupForm() {
+    
     Parse.initialize("LzoGzGiknLdEUXmyB04WsMS3t564Xl9m9DhFIo6D", "lxPUR3V3ZNA72WqYSD0K8DgVxb6XWzCOvS5CiKcM");
 
     Parse.Cloud.run("listEvents", {}, {
@@ -14,6 +16,7 @@ function initSignupForm() {
                 if (eventDate > today) {
                     listItems += buildOptionFromParse(dateString, dateString);
                     EVENT_DATE = eventDate;
+                    EVENT_TYPE = object.get("eventType");
                     // only take the first entry, and break after that.
                     break;
                 }
@@ -106,6 +109,7 @@ function populateJobs() {
     //Parse.Cloud.run("listJobs", {event_id: selectedDateId}, {
     var jobQuery = new Parse.Query("Jobs");
     jobQuery.equalTo("reserved", false);
+    jobQuery.equalTo("job_type", EVENT_TYPE);
     jobQuery.ascending("sort_order");
     jobQuery.find({
         success: function (results) {
