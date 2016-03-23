@@ -15,7 +15,7 @@ function initSignupForm() {
                 var eventDate = new Date(dateString);
                 if (eventDate > today) {
                     listItems += buildOptionFromParse(dateString, dateString);
-                    EVENT_DATE = eventDate;
+                    EVENT_DATE = dateString;
                     EVENT_TYPE = object.get("eventType");
                     // only take the first entry, and break after that.
                     break;
@@ -68,9 +68,10 @@ function handleSubmit(form) {
     });
     var name = data["name"];
     var date = data["date"];
+    var contact = data["contact"];
     var job = JSON.parse(data["job"]);
     Parse.Cloud.run("processSignup", 
-        { name: name, date: date, job: job }, {
+        { name: name, date: date, contact: contact, job: job }, {
         success: function() {},
         error: function() {}
     });
@@ -95,7 +96,7 @@ function populateJobs() {
     // get the signups for this date
     var signupQuery = new Parse.Query("Signup");
     var signupJobIds = new Array();
-    signupQuery.equalTo("event", EVENT_DATE);
+    //signupQuery.equalTo("event", EVENT_DATE);
     signupQuery.select("event", "job_id");
     signupQuery.find({
         success: function (signupResults) {

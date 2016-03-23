@@ -8,26 +8,17 @@ Parse.Cloud.afterSave("Signup",
         var jobTitle = request.object.get("job_title");
         var event = request.object.get("event");
         var jobLeader = request.object.get("leader_email");
-
+        var contact = request.object.get("contact");
 
         var Mailgun = require("mailgun");
         Mailgun.initialize('sandboxd12b57cf73ce4b56ad3a175e89c5c8e1.mailgun.org', 'key-6d3648873bf6a19a939569cdda457c66');
 
         var msgSubject = name + " signed up for " + jobTitle + " on " + event;
         Mailgun.sendEmail({
-            to: "adelimon@gmail.com, hogbacksecretary@gmail.com," + jobLeader,
+            to: "adelimon@gmail.com,hogbacksecretary@gmail.com," + jobLeader,
             from: "signup@palmyramx.com",
             subject: msgSubject,
-            text: msgSubject + ". Please see the signup sheet for details.  The list is available at http://apps.palmyramx.com/signupsheets.html"
-        }, {
-            success: function(httpResponse) {
-                console.log(httpResponse);
-                httpResponse.success("Email sent!");
-            },
-            error: function(httpResponse) {
-                console.error(httpResponse);
-                httpResponse.error("Uh oh, something went wrong");
-            }
+            text: msgSubject + ". " + name + " can be contacted at the following email or phone " + contact
         });
         
     }
@@ -88,6 +79,7 @@ Parse.Cloud.define("processSignup",
         var job = request.params.job;
         var name = request.params.name;
         var date = request.params.date;
+        var contact = request.params.contact;
         var Signup = Parse.Object.extend("Signup");
         var savedSignup = new Signup();
         savedSignup.set("name", name);
@@ -101,6 +93,7 @@ Parse.Cloud.define("processSignup",
         savedSignup.set("job_day", job.job_day);
         savedSignup.set("job_id", job.objectId);
         savedSignup.set("leader_email", job.leader_email);
+        savedSignup.set("contact", contact);
         savedSignup.save(null, {
             success: function(savedSignup) {
                 // Execute any logic that should take place after the object is saved.
